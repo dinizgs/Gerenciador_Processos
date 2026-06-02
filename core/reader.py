@@ -11,7 +11,9 @@ def obter_usuario():
 
 def calcular_tempo_execucao(dados_sobraram):
     try:
+        #UTIME: Representa o tempo que a CPU passou executando instruções no espaço do usuário
         utime = dados_sobraram[11]
+        #STIME: Representa o tempo que a CPU passou executando chamadas de sistema no espaço do kernel em nome do seu programa
         stime = dados_sobraram[12]
 
         total_ticks = utime +stime
