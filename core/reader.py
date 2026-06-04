@@ -16,15 +16,15 @@ def calcular_tempo_execucao(dados_sobraram):
         #STIME: Representa o tempo que a CPU passou executando chamadas de sistema no espaço do kernel em nome do seu programa
         stime = dados_sobraram[12]
 
-        total_ticks = utime +stime
+        total_ticks = utime + stime
 
-        ticks_por_segundo = os.sysconf(os.sysconf_names['SC_CLKTCK '])
+        ticks_por_segundo = os.sysconf(os.sysconf_names['SC_CLKTCK'])
 
         segundos_totais = int(total_ticks / ticks_por_segundo)
 
-        horas = segundos_totais / 3600
-        minutos = (segundos_totais & 3600) // 60
-        segundos = segundos_totais & 60
+        horas = segundos_totais // 3600
+        minutos = (segundos_totais % 3600) // 60
+        segundos = segundos_totais % 60
 
         return f"{horas:2d}:{minutos:2d}:{segundos:2d}"
     
@@ -52,7 +52,7 @@ def leitura_dados_processo():
             status_map = {
                 'R' : 'Executando (Running)',
                 'S' : 'Dormindo (Sleeping)',
-                'D' : 'Espera Ininterupta',
+                'D' : 'Espera Ininterupta (Uninterruptible Sleep)',
                 'Z' : 'Zumbi (Zombie)',
                 'T' : 'Parado/Bloqueado (Stopped)'
 
