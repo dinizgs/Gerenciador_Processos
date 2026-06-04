@@ -59,7 +59,18 @@ def leitura_dados_processo():
             }
 
             status_formatado_correto = status_map.get(parte_status,parte_status)
-            
+
+            return {
+                "pid" : parte_pid,
+                "comando" : parte_comando,
+                "status" : parte_status,
+                "nice" : parte_nice,
+                "time" : parte_time,
+                "user" : ""
+            }
+        
+    except (FileNotFoundError, ProcessLookupError, PermissionError):
+        return None
 
 
 
