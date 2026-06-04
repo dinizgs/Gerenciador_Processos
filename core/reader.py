@@ -23,8 +23,8 @@ def calcular_tempo_execucao(dados_sobraram):
         segundos_totais = int(total_ticks / ticks_por_segundo)
 
         horas = segundos_totais / 3600
-        minutos = (segundos_totais & 3600) // 60
-        segundos = segundos_totais & 60
+        minutos = (segundos_totais % 3600) // 60
+        segundos = segundos_totais % 60
 
         return f"{horas:2d}:{minutos:2d}:{segundos:2d}"
     
