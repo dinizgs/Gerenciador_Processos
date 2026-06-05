@@ -52,3 +52,16 @@ def reiniciar_processo(pid):
     
     except (ProcessLookupError, PermissionError, FileNotFoundError, AttributeError):
         return False
+
+def alterar_prioridade_execucao(pid,nice):
+    try:
+        os.setpriority(os.PRIO_PROCESS, int(pid), int(nice))
+        return True
+    
+    #Se o processo sumir ou apagar
+    except (ProcessLookupError):
+        return False
+    
+    #Se o processo precisa de permissão de adm para mudar a prioridade
+    except (PermissionError):
+        return False
