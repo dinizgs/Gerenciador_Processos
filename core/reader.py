@@ -22,11 +22,7 @@ def calcular_tempo_execucao(dados_sobraram):
 
         segundos_totais = int(total_ticks / ticks_por_segundo)
 
-<<<<<<< HEAD
-        horas = segundos_totais // 3600
-=======
         horas = segundos_totais / 3600
->>>>>>> 47d4141700242443ccab2cd096beb68c4c82fa8d
         minutos = (segundos_totais % 3600) // 60
         segundos = segundos_totais % 60
 
