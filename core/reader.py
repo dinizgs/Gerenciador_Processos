@@ -6,7 +6,8 @@ from datetime import datetime
 
 #Função para retornar o usuário logado
 def obter_usuario():
-    return pwd.getpwuid(os.getuid()).pw_name
+    user = pwd.getpwuid(os.getuid()).pw_name
+    return user
 
 
 def calcular_tempo_execucao(dados_sobraram):
@@ -16,17 +17,13 @@ def calcular_tempo_execucao(dados_sobraram):
         #STIME: Representa o tempo que a CPU passou executando chamadas de sistema no espaço do kernel em nome do seu programa
         stime = dados_sobraram[12]
 
-        total_ticks = utime + stime
+        total_ticks = utime +stime
 
         ticks_por_segundo = os.sysconf(os.sysconf_names['SC_CLKTCK'])
 
         segundos_totais = int(total_ticks / ticks_por_segundo)
 
-<<<<<<< HEAD
         horas = segundos_totais // 3600
-=======
-        horas = segundos_totais / 3600
->>>>>>> 47d4141700242443ccab2cd096beb68c4c82fa8d
         minutos = (segundos_totais % 3600) // 60
         segundos = segundos_totais % 60
 
@@ -35,9 +32,9 @@ def calcular_tempo_execucao(dados_sobraram):
     except Exception:
         return "00:00:00"
 
-def leitura_dados_processo():
+def leitura_dados_processo(pid, user): #O user como parâmetro faz referencia ao retorno da primeira função --> line 70
     try:
-        with open("/proc/[PID]/stat","r") as r:
+        with open(f"/proc/{pid}/stat","r") as r:
             conteudo = r.read()
 
             parte_inicial = conteudo.split(')')
@@ -63,18 +60,37 @@ def leitura_dados_processo():
             }
 
             status_formatado_correto = status_map.get(parte_status,parte_status)
+            #uid_processo = os.stat(f"/proc/{pid}/stat").st_uid (Essa linha foi de uma pesquisa e o gemini sugeriu, mas não entendi totalmente, se precisar, tiro o comentário)
 
             return {
                 "pid" : parte_pid,
                 "comando" : parte_comando,
-                "status" : parte_status,
+                "status" : status_formatado_correto,
                 "nice" : parte_nice,
                 "time" : parte_time,
-                "user" : ""
+                "user" : user #Ai o user é usado aqui
             }
         
     except (FileNotFoundError, ProcessLookupError, PermissionError):
         return None
+
+
+def listagem_dados_processos():
+    lista_processos = [] #aqui vai armazenar os processos por ID, sendo convertidos sempre em digitos
+    user = obter_usuario() #resgata o usuário logado
+    
+    try:
+        for nome_dir in os.listdir("/proc"): #percorre a lista de diretórios fruto da biblioteca os
+            if nome_dir.isdigit(): #filtra os diretórios somente para os que contém PID
+                pid = int(nome_dir) #Consta PID como o iterador nome_dir
+                dados_processo = leitura_dados_processo(pid, user) #chama a função com os parâmetros do PID e usuário dinâmicos
+
+                if dados_processo is not None:
+                    lista_processos.append(dados_processo)
+    except Exception as e:
+        print(f"Erro ao listar os processos: {e}")
+    return lista_processos
+
 
 
 
