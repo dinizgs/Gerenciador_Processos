@@ -39,7 +39,8 @@ def executar_processo(comando_abrir_programa):
 
 def reiniciar_processo(pid):
     try:
-        dados_gerais = reader.leitura_dados_processo(pid)
+        usuario_atual = reader.obter_usuario()
+        dados_gerais = reader.leitura_dados_processo(pid,usuario_atual)
 
         if dados_gerais == None:
             return False
