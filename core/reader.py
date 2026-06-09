@@ -63,12 +63,12 @@ def leitura_dados_processo(pid, user): #O user como parâmetro faz referencia ao
             #uid_processo = os.stat(f"/proc/{pid}/stat").st_uid (Essa linha foi de uma pesquisa e o gemini sugeriu, mas não entendi totalmente, se precisar, tiro o comentário)
 
             return {
-                "pid" : parte_pid,
-                "comando" : parte_comando,
-                "status" : status_formatado_correto,
-                "nice" : parte_nice,
-                "time" : parte_time,
-                "user" : user #Ai o user é usado aqui
+                "Pid" : parte_pid,
+                "Comando" : parte_comando,
+                "Status" : status_formatado_correto,
+                "Nice" : parte_nice,
+                "Time" : parte_time,
+                "User" : user #Ai o user é usado aqui
             }
         
     except (FileNotFoundError, ProcessLookupError, PermissionError):
