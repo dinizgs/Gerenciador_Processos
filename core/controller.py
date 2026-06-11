@@ -1,7 +1,16 @@
 import os
 import signal
 import subprocess
-import reader
+import sys
+
+caminho = os.path.dirname(os.path.abspath(__file__))
+
+raiz_projeto = os.path.dirname(caminho)
+
+if raiz_projeto not in sys.path:
+    sys.path.append(raiz_projeto)
+
+from core import reader
 from typing import Tuple
 
 
