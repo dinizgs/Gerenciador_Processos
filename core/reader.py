@@ -19,7 +19,6 @@ def leitura_dados_processo(pid):
         with open(caminho_stat, "r") as r:
             conteudo = r.read()
 
-            # Isola o PID e o Comando tratando os parênteses do Linux
             parte_inicial = conteudo.split(')')
             pid_e_nome = parte_inicial[0].split('(')
 
