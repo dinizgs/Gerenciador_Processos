@@ -1,106 +1,78 @@
 import os
 import pwd
-import psutil
-from datetime import datetime
+import sys
 
+# Garante que o Python encontre a pasta raiz do projeto no path
+caminho = os.path.dirname(os.path.abspath(__file__))
+raiz_projeto = os.path.dirname(caminho)
+if raiz_projeto not in sys.path:
+    sys.path.append(raiz_projeto)
 
-#Função para retornar o usuário logado
-def obter_usuario():
-    user = pwd.getpwuid(os.getuid()).pw_name
-    return user
+# Importa o arquivo formatters de dentro da pasta utils localizada na raiz
+from utils import formatters
 
-
-def calcular_tempo_execucao(dados_sobraram):
-    try:
-        #UTIME: Representa o tempo que a CPU passou executando instruções no espaço do usuário
-        utime = int(dados_sobraram[11])
-        #STIME: Representa o tempo que a CPU passou executando chamadas de sistema no espaço do kernel em nome do seu programa
-        stime = int(dados_sobraram[12])
-
-        total_ticks = utime +stime
-
-        ticks_por_segundo = os.sysconf(os.sysconf_names['SC_CLKTCK'])
-
-        segundos_totais = int(total_ticks / ticks_por_segundo)
-
-        horas = segundos_totais // 3600
-        minutos = (segundos_totais % 3600) // 60
-        segundos = segundos_totais % 60
-
-        return f"{horas:2d}:{minutos:2d}:{segundos:2d}"
-    
-    except Exception:
-        return "00:00:00"
 
 def leitura_dados_processo(pid):
     try:
         caminho_stat = f"/proc/{pid}/stat"
 
-        with open(caminho_stat,"r") as r:
+        with open(caminho_stat, "r") as r:
             conteudo = r.read()
 
+            # Isola o PID e o Comando tratando os parênteses do Linux
             parte_inicial = conteudo.split(')')
             pid_e_nome = parte_inicial[0].split('(')
 
             parte_pid = pid_e_nome[0].strip()
             parte_comando = pid_e_nome[1].strip()
 
+            # Separa o restante dos dados numéricos pós-comando
             dados_restantes = parte_inicial[1].split()
 
             parte_status = dados_restantes[0]
             parte_nice = dados_restantes[16]
 
-            parte_time = calcular_tempo_execucao(dados_sobraram=dados_restantes)
+            parte_time = formatters.calcular_tempo_execucao(dados_restantes)
+            status_formatado_correto = formatters.formatar_status(parte_status)
 
-            status_map = {
-                'R' : '🟢 Executando (Running)',
-                'S' : '🌙 Dormindo (Sleeping)',
-                'D' : '⏳ Espera Ininterrupta (Dounded Sleep)',
-                'Z' : '💀 Zumbi (Zombie)',
-                'T' : '🛑 Parado/Bloqueado (Stopped)',
-                'I' : '💤 Ocioso (Idle)'
-            }
-
-            status_formatado_correto = status_map.get(parte_status,parte_status)
-
+            # Coleta o UID do dono do processo
             uid_processo = os.stat(caminho_stat).st_uid
 
-            #Converte o número do PID para texto real
+            # Traduz o UID numérico para o nome real do usuário
             try:
                 user_real = pwd.getpwuid(uid_processo).pw_name
-
             except KeyError:
                 user_real = str(uid_processo)
 
             return {
-                "Pid" : parte_pid,
-                "Comando" : parte_comando,
-                "Status" : status_formatado_correto,
-                "Nice" : parte_nice,
-                "Time" : parte_time,
-                "User" : user_real
+                "Pid": parte_pid,
+                "Comando": parte_comando,
+                "Status": status_formatado_correto,
+                "Nice": parte_nice,
+                "Time": parte_time,
+                "User": user_real
             }
     
     except Exception as erro:
         print(f"Erro no PID {pid}: {erro}")
         return None
 
+
 def listagem_dados_processos():
-    lista_processos = [] #aqui vai armazenar os processos por ID, sendo convertidos sempre em digitos
-    user = obter_usuario() #resgata o usuário logado
+    lista_processos = [] 
     
     try:
-        for nome_dir in os.listdir("/proc"): #percorre a lista de diretórios fruto da biblioteca os
-            if nome_dir.isdigit(): #filtra os diretórios somente para os que contém PID
-                pid = int(nome_dir) #Consta PID como o iterador nome_dir
-                dados_processo = leitura_dados_processo(pid) #chama a função com os parâmetros do PID e usuário dinâmicos
+        for nome_dir in os.listdir("/proc"): 
+            if nome_dir.isdigit(): 
+                pid = int(nome_dir) 
+                dados_processo = leitura_dados_processo(pid) 
 
                 if dados_processo is not None:
                     lista_processos.append(dados_processo)
+                    
     except Exception as e:
         print(f"Erro ao listar os processos: {e}")
+        
     return lista_processos
-
-
 
 
