@@ -48,13 +48,13 @@ def executar_processo(comando_abrir_programa):
 
 def reiniciar_processo(pid):
     try:
-        usuario_atual = reader.obter_usuario()
-        dados_gerais = reader.leitura_dados_processo(pid,usuario_atual)
+        #usuario_atual = reader.obter_usuario()
+        dados_gerais = reader.leitura_dados_processo(pid)
 
         if dados_gerais == None:
             return False
         
-        parte_comando = dados_gerais.get("comando")
+        parte_comando = dados_gerais.get("Comando")
 
         finalizar_processo(pid)
         executar_processo(parte_comando)
