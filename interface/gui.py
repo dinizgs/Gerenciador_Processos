@@ -7,7 +7,7 @@ raiz_projeto = os.path.dirname(caminho)
 if raiz_projeto not in sys.path:
     sys.path.append(raiz_projeto)
 
-from core import controller
+from core import controller,reader
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem,
     QPushButton, QLineEdit, QLabel, QDialog, QSpinBox, QMessageBox, QDialogButtonBox,
@@ -78,11 +78,18 @@ class Interface(QMainWindow):
         # Regra para expandir a coluna do Comando
         regra_esticar = QHeaderView.ResizeMode.Stretch
         cabecalho = self.tabela_itens.horizontalHeader()
+        cabecalho.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         cabecalho.setSectionResizeMode(2, regra_esticar)
 
         # Seleção de linhas por processo
         self.tabela_itens.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabela_itens.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+
+        #Atualização da tabela a cada 2 segundos, para não travar
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.atualizar_tabela)
+        self.timer.start(2000)
+        self.atualizar_tabela()
 
     def pausar_processo_gui(self):
         linha_selecionada = self.tabela_itens.currentRow() 
@@ -142,7 +149,29 @@ class Interface(QMainWindow):
             QMessageBox.critical(self, "Erro!", f"Ação não concluída.")
 
     def atualizar_tabela(self):
-        pass
+        lista_processos = reader.listagem_dados_processos()
+
+        self.tabela_itens.setRowCount(0)
+
+        for processo in lista_processos:
+            linha_atual = self.tabela_itens.rowCount()
+            self.tabela_itens.insertRow(linha_atual)
+
+            item_pid = QTableWidgetItem(str(processo["Pid"]))
+            item_user = QTableWidgetItem(str(processo["User"]))
+            item_comando = QTableWidgetItem(str(processo["Comando"]))
+            item_status = QTableWidgetItem(str(processo["Status"]))
+            item_time = QTableWidgetItem(str(processo["Time"]))
+            item_nice = QTableWidgetItem(str(processo["Nice"]))
+
+            self.tabela_itens.setItem(linha_atual,0,item_pid)
+            self.tabela_itens.setItem(linha_atual,1,item_user)
+            self.tabela_itens.setItem(linha_atual,2,item_comando)
+            self.tabela_itens.setItem(linha_atual,3,item_status)
+            self.tabela_itens.setItem(linha_atual,4,item_time)
+            self.tabela_itens.setItem(linha_atual,5,item_nice)
+
+
 
 
 if __name__ == "__main__":
