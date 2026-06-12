@@ -84,10 +84,6 @@ def leitura_dados_processo(pid):
     except Exception as erro:
         print(f"Erro no PID {pid}: {erro}")
         return None
-        
-    #except (FileNotFoundError, ProcessLookupError, PermissionError):
-        #return None
-
 
 def listagem_dados_processos():
     lista_processos = [] #aqui vai armazenar os processos por ID, sendo convertidos sempre em digitos
