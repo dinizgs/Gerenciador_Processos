@@ -85,10 +85,50 @@ class Interface(QMainWindow):
         self.tabela_itens.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabela_itens.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
-        #Atualização da tabela a cada 2 segundos, para não travar
+        layout_inferior = QHBoxLayout()
+        layout_inferior.addStretch()
+
+        #---------Executar um novo processo----------
+        #---------Parte da Esquerda------------------
+        label_novo_processo = QLabel("Novo Processo:")
+        self.texto_comando = QLineEdit()
+        self.texto_comando.setPlaceholderText("Digite um comando...")
+        self.texto_comando.setMaximumWidth(300)
+
+        button_executar_comando = QPushButton("▶ Executar")
+
+        layout_inferior.addWidget(label_novo_processo)
+        layout_inferior.addWidget(self.texto_comando)
+        layout_inferior.addWidget(button_executar_comando)
+        
+        #Adicionar um espaçamento entre a parte da direita e esquerda
+        layout_inferior.setSpacing(60)
+        label_separar_visual = QLabel("||")
+        layout_inferior.addWidget(label_separar_visual)
+
+        #-----------Alterar a prioridade de um processo(NICE)----------
+        #-----------Parte da Direita-----------------------------------
+        label_alterar_prioridade = QLabel("Alterar Prioridade(NICE):")
+        self.spin_box_nice = QSpinBox()
+        self.spin_box_nice.setRange(-20,19)
+        self.spin_box_nice.setValue(0)
+
+        button_aplicar_nice = QPushButton("⚡ Aplicar")
+
+        layout_inferior.addWidget(label_alterar_prioridade)
+        layout_inferior.addWidget(self.spin_box_nice)
+        layout_inferior.addWidget(button_aplicar_nice)
+
+        layout_inferior.addStretch()
+
+        #Adicionando ao layout principal
+        layout_principal.addLayout(layout_inferior)
+
+
+        #Atualização da tabela a cada 3 segundos, para não travar
         self.timer = QTimer()
         self.timer.timeout.connect(self.atualizar_tabela)
-        self.timer.start(2000)
+        self.timer.start(3000)
         self.atualizar_tabela()
 
     def pausar_processo_gui(self):
