@@ -150,6 +150,7 @@ class Interface(QMainWindow):
 
         button_executar_comando = BotaoFuturistaAnimado("▶ Executar")
         button_executar_comando.setObjectName("btn_executar")
+        button_executar_comando.clicked.connect(self.executar_processo_gui)
 
         layout_inferior.addWidget(label_novo_processo)
         layout_inferior.addWidget(self.texto_comando)
@@ -170,6 +171,7 @@ class Interface(QMainWindow):
 
         button_aplicar_nice = BotaoFuturistaAnimado("⚡ Aplicar")
         button_aplicar_nice.setObjectName("btn_aplicar")
+        button_aplicar_nice.clicked.connect(self.alterar_prioridade_gui)
 
         layout_inferior.addWidget(label_alterar_prioridade)
         layout_inferior.addWidget(self.spin_box_nice)
@@ -184,7 +186,7 @@ class Interface(QMainWindow):
         #Atualização da tabela a cada 4 segundos, para não travar
         self.timer = QTimer()
         self.timer.timeout.connect(self.atualizar_tabela)
-        self.timer.start(4000)
+        self.timer.start(15000)
         self.atualizar_tabela()
 
     def pausar_processo_gui(self):
@@ -241,6 +243,36 @@ class Interface(QMainWindow):
         
         if conclusao:
             QMessageBox.information(self, "Ação concluída!", f"{pid} reiniciado!")
+        else:
+            QMessageBox.critical(self, "Erro!", f"Ação não concluída.")
+
+    def executar_processo_gui(self):
+        comando = self.texto_comando.text().strip()
+        if not comando:
+            QMessageBox.warning(self, "Warning", "Digite um comando Válido!")
+            return
+
+        conclusao = controller.executar_processo(comando)
+        if conclusao is True:
+            QMessageBox.information(self, "Ação com êxito!", f"{comando} em execução!")
+            self.texto_comando.clear()
+            self.atualizar_tabela()
+        else:
+            QMessageBox.critical(self, "Erro!", f"Ação não concluída.")
+
+    def alterar_prioridade_gui(self):
+        linha_selecionada = self.tabela_itens.currentRow()
+        if linha_selecionada == -1:
+            QMessageBox.warning(self, "Warning", "Algum processo deve ser selecionado!")
+            return
+        
+        pid = self.tabela_itens.item(linha_selecionada, 0).text()
+        new_nice = self.spin_box_nice.value()
+        conclusao = controller.alterar_prioridade_execucao(pid, new_nice)
+
+        if conclusao is True:
+            QMessageBox.information(self, "Ação com êxito!", f"Prioridade do PID {pid} alterada!")
+            self.atualizar_tabela()
         else:
             QMessageBox.critical(self, "Erro!", f"Ação não concluída.")
 
