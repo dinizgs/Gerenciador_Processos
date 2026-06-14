@@ -15,6 +15,46 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QTimer, Qt
 
+
+from PySide6.QtCore import QVariantAnimation, QAbstractAnimation
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QGraphicsDropShadowEffect, QPushButton
+
+class BotaoFuturistaAnimado(QPushButton):
+    def __init__(self, text, cor_rgb_glow=(0, 229, 255), parent=None):
+        super().__init__(text, parent)
+        r, g, b = cor_rgb_glow
+        
+        # Cria o efeito de brilho neon (Glow)
+        self.efeito_brilho = QGraphicsDropShadowEffect(self)
+        self.efeito_brilho.setBlurRadius(15)
+        self.efeito_brilho.setColor(QColor(r, g, b, 0)) # Começa invisível
+        self.efeito_brilho.setOffset(0, 0)
+        self.setGraphicsEffect(self.efeito_brilho)
+        
+        # Configura a animação da transição (200 milissegundos)
+        self.animacao = QVariantAnimation(self)
+        self.animacao.setDuration(200) 
+        self.animacao.setStartValue(QColor(r, g, b, 0))    # Sem brilho
+        self.animacao.setEndValue(QColor(r, g, b, 200))    # Brilho neon intenso
+        self.animacao.valueChanged.connect(self.atualizar_brilho)
+
+    def atualizar_brilho(self, cor):
+        self.efeito_brilho.setColor(cor)
+
+    def enterEvent(self, event):
+        self.animacao.setDirection(QAbstractAnimation.Direction.Forward)
+        if self.animacao.state() == QAbstractAnimation.State.Stopped:
+            self.animacao.start()
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.animacao.setDirection(QAbstractAnimation.Direction.Backward)
+        if self.animacao.state() == QAbstractAnimation.State.Stopped:
+            self.animacao.start()
+        super().leaveEvent(event)
+
+
 class Interface(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -32,11 +72,20 @@ class Interface(QMainWindow):
         # Layout do topo (Botões de controle rápido)
         
         self.layout_topo_botoes = QHBoxLayout()
-        button_pausar = QPushButton("⏸ Pausar")
-        button_continuar = QPushButton("▶ Continuar")
-        button_finalizar = QPushButton("✕ Finalizar")
-        button_reiniciar = QPushButton("🔄 Reiniciar")
-        button_atualizar = QPushButton("🔄 Atualizar")
+        button_pausar = BotaoFuturistaAnimado("⏸ Pausar", cor_rgb_glow=(148, 163, 184))
+        button_pausar.setObjectName("btn_pausar")
+
+        button_continuar = BotaoFuturistaAnimado("▶ Continuar", cor_rgb_glow=(16, 185, 129))
+        button_continuar.setObjectName("btn_continuar")
+
+        button_finalizar = BotaoFuturistaAnimado("✕ Finalizar", cor_rgb_glow=(239, 68, 68))
+        button_finalizar.setObjectName("btn_finalizar")
+
+        button_reiniciar = BotaoFuturistaAnimado("🔄 Reiniciar", cor_rgb_glow=(148, 163, 184))
+        button_reiniciar.setObjectName("btn_reiniciar")
+
+        button_atualizar = BotaoFuturistaAnimado("🔄 Atualizar")
+        button_atualizar.setObjectName("btn_atualizar")
 
         self.layout_topo_botoes.addWidget(button_pausar)
         self.layout_topo_botoes.addWidget(button_continuar)
@@ -85,6 +134,9 @@ class Interface(QMainWindow):
         # Seleção de linhas por processo
         self.tabela_itens.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabela_itens.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        
+        # Esconde a numeração automática da lateral esquerda
+        self.tabela_itens.verticalHeader().setVisible(False)
 
         layout_inferior = QHBoxLayout()
         layout_inferior.addStretch()
@@ -96,7 +148,8 @@ class Interface(QMainWindow):
         self.texto_comando.setPlaceholderText("Digite um comando...")
         self.texto_comando.setMaximumWidth(300)
 
-        button_executar_comando = QPushButton("▶ Executar")
+        button_executar_comando = BotaoFuturistaAnimado("▶ Executar")
+        button_executar_comando.setObjectName("btn_executar")
 
         layout_inferior.addWidget(label_novo_processo)
         layout_inferior.addWidget(self.texto_comando)
@@ -105,6 +158,7 @@ class Interface(QMainWindow):
         #Adicionar um espaçamento entre a parte da direita e esquerda
         layout_inferior.setSpacing(60)
         label_separar_visual = QLabel("||")
+        label_separar_visual.setObjectName("separador_visual")
         layout_inferior.addWidget(label_separar_visual)
 
         #-----------Alterar a prioridade de um processo(NICE)----------
@@ -114,7 +168,8 @@ class Interface(QMainWindow):
         self.spin_box_nice.setRange(-20,19)
         self.spin_box_nice.setValue(0)
 
-        button_aplicar_nice = QPushButton("⚡ Aplicar")
+        button_aplicar_nice = BotaoFuturistaAnimado("⚡ Aplicar")
+        button_aplicar_nice.setObjectName("btn_aplicar")
 
         layout_inferior.addWidget(label_alterar_prioridade)
         layout_inferior.addWidget(self.spin_box_nice)
@@ -201,7 +256,21 @@ class Interface(QMainWindow):
             item_pid = QTableWidgetItem(str(processo["Pid"]))
             item_user = QTableWidgetItem(str(processo["User"]))
             item_comando = QTableWidgetItem(str(processo["Comando"]))
-            item_status = QTableWidgetItem(str(processo["Status"]))
+            
+            texto_status = str(processo["Status"])
+            item_status = QTableWidgetItem(texto_status)
+            
+            if "Executando" in texto_status or "Running" in texto_status:
+                item_status.setForeground(QColor("#10b981"))
+            elif "Dormindo" in texto_status or "Sleeping" in texto_status:
+                item_status.setForeground(QColor("#f59e0b"))
+            elif "Idle" in texto_status or "Ocioso" in texto_status:
+                item_status.setForeground(QColor("#38bdf8"))
+            elif "Zumbi" in texto_status or "Zombie" in texto_status or "Parado" in texto_status:
+                item_status.setForeground(QColor("#ef4444"))
+            else:
+                item_status.setForeground(QColor("#94a3b8"))
+
             item_time = QTableWidgetItem(str(processo["Time"]))
             item_nice = QTableWidgetItem(str(processo["Nice"]))
 
@@ -211,8 +280,6 @@ class Interface(QMainWindow):
             self.tabela_itens.setItem(linha_atual,3,item_status)
             self.tabela_itens.setItem(linha_atual,4,item_time)
             self.tabela_itens.setItem(linha_atual,5,item_nice)
-
-
 
 
 if __name__ == "__main__":

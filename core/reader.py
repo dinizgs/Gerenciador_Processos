@@ -31,6 +31,7 @@ def leitura_dados_processo(pid):
             parte_status = dados_restantes[0]
             parte_nice = dados_restantes[16]
 
+            # Esta linha agora vai receber a string com o tempo real calculado pelo starttime
             parte_time = formatters.calcular_tempo_execucao(dados_restantes)
             status_formatado_correto = formatters.formatar_status(parte_status)
 
