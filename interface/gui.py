@@ -62,6 +62,7 @@ class Interface(QMainWindow):
         #Título (Logo abaixo dos botões)
         
         titulo = QLabel("⚙️Gerenciador de Processos no Linux")
+        titulo.setObjectName("titulo_gerenciador")
         layout_principal.addWidget(titulo)
 
         # -------------------------------------------------------------------
@@ -216,6 +217,24 @@ class Interface(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    # Descobre o caminho exato da pasta onde este arquivo gui.py está salvo
+    diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+    
+    # Aponta para o arquivo correto: "stylesheet.qss" dentro da pasta da interface
+    caminho_estilo = os.path.join(diretorio_atual, "style.qss")
+
+    try:
+        with open(caminho_estilo, "r", encoding="utf-8") as f:
+            app.setStyleSheet(f.read())
+
+    except FileNotFoundError:
+        # Se o arquivo sumir, o app abre sem estilo, mas não crasha a execução
+        print(f"Aviso: O arquivo de estilos não foi encontrado em: {caminho_estilo}")
+
+    except Exception as e:
+        print(f"Erro ao carregar o QSS: {e}")
+
     janela = Interface()
     janela.show()
     sys.exit(app.exec())
