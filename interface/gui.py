@@ -181,7 +181,7 @@ class Interface(QMainWindow):
         layout_principal.addLayout(layout_inferior)
 
 
-        #Atualização da tabela a cada 3 segundos, para não travar
+        #Atualização da tabela a cada 4 segundos, para não travar
         self.timer = QTimer()
         self.timer.timeout.connect(self.atualizar_tabela)
         self.timer.start(4000)
