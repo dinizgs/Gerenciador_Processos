@@ -184,7 +184,7 @@ class Interface(QMainWindow):
         #Atualização da tabela a cada 3 segundos, para não travar
         self.timer = QTimer()
         self.timer.timeout.connect(self.atualizar_tabela)
-        self.timer.start(3000)
+        self.timer.start(4000)
         self.atualizar_tabela()
 
     def pausar_processo_gui(self):
