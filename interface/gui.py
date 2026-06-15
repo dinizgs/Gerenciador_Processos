@@ -138,6 +138,8 @@ class Interface(QMainWindow):
         # Esconde a numeração automática da lateral esquerda
         self.tabela_itens.verticalHeader().setVisible(False)
 
+        self.tabela_itens.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+
         layout_inferior = QHBoxLayout()
         layout_inferior.addStretch()
 
