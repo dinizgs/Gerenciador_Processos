@@ -2,46 +2,52 @@
 
 # Gerenciador de Processos Linux 🐧⚙️
 
-Um monitor e gerenciador de processos nativo para sistemas baseados em Linux desenvolvido em Python e PySide6. O software atua diretamente sobre o sistema de arquivos virtual `/proc` do Kernel, oferecendo uma interface gráfica moderna com monitoramento em tempo real e controle operacional de tarefas correntes, utilizando conceitos avançados de programação concorrente (multithreading).
+Um monitor e gerenciador de processos nativo para sistemas baseados em Linux, desenvolvido em Python e **PySide6**. O software atua diretamente sobre o sistema de arquivos virtual `/proc` do Kernel, oferecendo uma interface gráfica moderna com monitoramento em tempo real e controle operacional de tarefas correntes, utilizando conceitos avançados de multithreading.
 
-*OBS.: Na aba **Releases** deste repositório, há o arquivo executável portátil para a realização de testes práticos imediatos.*
+*OBS.: Na aba **Releases** deste repositório, disponibilizamos o executável portátil para testes práticos.*
 
 ---
 
 ## 🎯 Objetivo do Projeto
-O sistema tem como fito monitorar e manipular processos ativos no S.O. Linux, extraindo e estruturando de forma legível as seguintes informações de baixo nível diretamente do Kernel:
+O sistema tem como fito monitorar e manipular processos ativos no S.O. Linux, extraindo e estruturando de forma legível informações de baixo nível diretamente do Kernel:
+
 * **PID:** Identificador único do processo.
 * **User:** Usuário proprietário do processo.
 * **Comando:** Nome do executável/tarefa.
 * **Status:** Estado atual da thread (Executando, Dormindo, Zumbi, etc.) com estilização condicional.
-* **Tempo de CPU:** Tempo total consumido em espaço de usuário e kernel traduzido em tempo real.
+* **Tempo de CPU:** Tempo total consumido em espaço de usuário e kernel.
 * **NICE:** Índice de prioridade de agendamento de CPU.
 
 ---
 
 ## ✨ Funcionalidades Principais
-* ⏸ **Pausar (`SIGSTOP`):** Congela temporariamente a execução de um processo na memória RAM.
-* ▶ **Continuar (`SIGCONT`):** Retoma o processamento de uma tarefa que estava pausada.
-* ✕ **Finalizar (`SIGKILL`):** Encerra imediatamente a execução de um processo no sistema.
-* 🔄 **Reiniciar:** Coleta o escopo do processo, finaliza o PID corrente e inicializa uma nova instância idêntica.
-* ⚡ **Alterar Prioridade (NICE):** Altera a prioridade de agendamento do processo entre os valores `-20` (maior prioridade) e `19` (menor prioridade).
-* ▶ **Executar Novo Processo:** Cria e desacopla novos subprocessos do sistema operacional diretamente pela interface gráfica.
-* 🔄 **Atualização Dinâmica:** Varredura em tempo real controlada via timers assíncronos protegidos contra quebra ou perda de seleção do usuário.
+* ⏸ **Pausar (`SIGSTOP`):** Congela temporariamente a execução de um processo.
+* ▶ **Continuar (`SIGCONT`):** Retoma o processamento de uma tarefa pausada.
+* ✕ **Finalizar (`SIGKILL`):** Encerra imediatamente a execução de um processo.
+* 🔄 **Reiniciar:** Coleta o escopo do processo, finaliza o PID corrente e inicializa uma nova instância.
+* ⚡ **Alterar Prioridade (NICE):** Altera a prioridade de agendamento (intervalo de -20 a 19).
+* ▶ **Executar Novo Processo:** Abre e desacopla novos subprocessos via interface.
+* 🔄 **Atualização Dinâmica:** Varredura em tempo real controlada via timers assíncronos.
 
+---
 
+## 📂 Estrutura do Projeto
+
+```text
+GERENCIADOR_PROCESSOS/
 ├── core/
-│   ├── controller.py    # Regras de negócio e comunicação com Kernel (Sinais OS)
-│   └── reader.py        # Parser e leitura de baixo nível dos arquivos do /proc
+│   ├── controller.py    # Regras de negócio e comunicação com Kernel
+│   └── reader.py        # Parser e leitura de arquivos do /proc
 ├── interface/
-│   ├── gui.py           # Janela Principal, Componentes Qt e Conexões de Slots/Signals
-│   └── style.qss        # Customização visual da folha de estilos do sistema
+│   ├── gui.py           # Janela Principal e componentes Qt
+│   └── style.qss        # Customização visual (QSS)
 ├── utils/
-│   └── formatters.py    # Auxiliares de formatação de dados e strings
-├── .gitignore           # Filtro de arquivos para ignorar pastas locais (venv, build, dist)
-├── main.py              # Ponto de entrada (Bootstrap) e inicializador da aplicação
-├── main.spec            # Arquivo de configuração de compilação do PyInstaller
-├── README.md            # Documentação completa do sistema
-└── requirements.txt     # Listagem de dependências do projeto (PySide6)
+│   └── formatters.py    # Auxiliares de formatação de dados
+├── .gitignore           # Filtro de arquivos ignorados
+├── main.py              # Ponto de entrada (Bootstrap)
+├── main.spec            # Configuração do PyInstaller
+├── README.md            # Documentação
+└── requirements.txt     # Dependências (PySide6)
 
 ---
 
