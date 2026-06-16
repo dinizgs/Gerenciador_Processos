@@ -7,7 +7,7 @@ Um monitor e gerenciador de processos nativo para sistemas baseados em Linux, de
 ---
 
 ## 🎯 Objetivo do Projeto
-O sistema tem como fito monitorar e manipular processos ativos no S.O. Linux, extraindo e estruturando de forma legível informações de baixo nível diretamente do Kernel:
+O sistema tem como objetivo monitorar e manipular processos ativos no S.O. Linux, extraindo e estruturando de forma legível informações de baixo nível diretamente do Kernel:
 
 * **PID:** Identificador único do processo.
 * **User:** Usuário proprietário do processo.
@@ -111,7 +111,7 @@ Assim que o programa abrir, o sistema de auto-integração criará o atalho defi
 Se preferir rodar por linha de comando ou precisar depurar a saída no terminal, execute:
 
 ```bash
-# Conceda a permissão de execução
+# Concede a permissão de execução
 chmod +x Gerenciador_de_Processos-x86_64.AppImage
 
 # Execute o programa
