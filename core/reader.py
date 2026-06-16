@@ -53,10 +53,13 @@ def leitura_dados_processo(pid):
                 "User": user_real
             }
     
-    except Exception as erro:
-        print(f"Erro no PID {pid}: {erro}")
+    except (FileNotFoundError, IndexError, PermissionError):
         return None
-
+        
+    except Exception as erro:
+        # Só printa no terminal se for um erro bizarro e totalmente desconhecido
+        print(f"Erro inesperado no PID {pid}: {erro}")
+        return None
 
 def listagem_dados_processos():
     lista_processos = [] 
