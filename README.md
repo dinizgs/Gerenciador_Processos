@@ -50,7 +50,7 @@ GERENCIADOR_PROCESSOS/
 
 ```
 
-🛠️ Ambiente de Desenvolvimento Local
+## 🛠️ Ambiente de Desenvolvimento Local
 Para clonar e executar o código fonte diretamente para fins de manutenção ou estudo:
 
 1. Configuração do Ambiente
