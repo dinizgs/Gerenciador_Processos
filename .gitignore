@@ -1,4 +1,14 @@
+#Ambiente Virtual
 venv/
 .venv/
 __pycache__/
 *.pyc
+
+# Caches do Python
+__pycache__/
+*.pyc
+
+#Arquivos gerados pelo PyInstaller
+build/
+dist/
+*.spec
