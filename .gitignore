@@ -8,10 +8,11 @@ __pycache__/
 __pycache__/
 *.pyc
 
-#Arquivos gerados pelo PyInstaller
+# Arquivos gerados pelo PyInstaller
 build/
 dist/
 *.spec
+!main.spec
 
 # Arquivos compactados para Release
 *.tar.gz
