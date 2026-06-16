@@ -28,6 +28,21 @@ O sistema tem como fito monitorar e manipular processos ativos no S.O. Linux, ex
 * ▶ **Executar Novo Processo:** Cria e desacopla novos subprocessos do sistema operacional diretamente pela interface gráfica.
 * 🔄 **Atualização Dinâmica:** Varredura em tempo real controlada via timers assíncronos protegidos contra quebra ou perda de seleção do usuário.
 
+
+├── core/
+│   ├── controller.py    # Regras de negócio e comunicação com Kernel (Sinais OS)
+│   └── reader.py        # Parser e leitura de baixo nível dos arquivos do /proc
+├── interface/
+│   ├── gui.py           # Janela Principal, Componentes Qt e Conexões de Slots/Signals
+│   └── style.qss        # Customização visual da folha de estilos do sistema
+├── utils/
+│   └── formatters.py    # Auxiliares de formatação de dados e strings
+├── .gitignore           # Filtro de arquivos para ignorar pastas locais (venv, build, dist)
+├── main.py              # Ponto de entrada (Bootstrap) e inicializador da aplicação
+├── main.spec            # Arquivo de configuração de compilação do PyInstaller
+├── README.md            # Documentação completa do sistema
+└── requirements.txt     # Listagem de dependências do projeto (PySide6)
+
 ---
 
 ## 🚀 Como Executar e Integrar ao Sistema (Via AppImage)
