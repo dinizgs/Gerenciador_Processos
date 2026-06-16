@@ -16,3 +16,11 @@ dist/
 # Arquivos compactados para Release
 *.tar.gz
 *.zip
+
+
+# Ferramentas e estruturas do AppImage
+appimagetool-x86_64.AppImage
+Gerenciador.AppDir/
+
+# Pacote final gerado
+*.AppImage
