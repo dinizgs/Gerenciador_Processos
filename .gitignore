@@ -12,3 +12,7 @@ __pycache__/
 build/
 dist/
 *.spec
+
+# Arquivos compactados para Release
+*.tar.gz
+*.zip
